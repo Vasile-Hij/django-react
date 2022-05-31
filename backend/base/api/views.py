@@ -1,4 +1,3 @@
-from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -19,26 +18,25 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         return token
 
+
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
-    
+
 @api_view(['GET'])
 def getRoutes(request):
     routes = [
         '/api/token',
-        '/api/token/refresh'
+        '/api/token/refresh',
     ]
 
     return Response(routes)
 
 
 @api_view(['GET'])
-@permission_classes(IsAuthenticated)
+@permission_classes([IsAuthenticated])
 def getNotes(request):
     user = request.user
     notes = user.note_set.all()
-    serializers = NoteSerializer(notes, many=True)
-    
+    serializer = NoteSerializer(notes, many=True)
     return Response(serializer.data)
-    
