@@ -1,9 +1,10 @@
-from rest_framework import serializers
-from rest_framework.serializers import ModelSerializer
 from django.contrib.auth.models import User
 
-from base.models import Note
+from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 
+from base.models import Note
 
 
 class NoteSerializer(ModelSerializer):
@@ -33,3 +34,15 @@ class UserSerializer(serializers.ModelSerializer):
             name = obj.email
             
         return name
+      
+        
+class UserSerializernWithToken(UserSerializer):
+    token = serializers.SerializerMethodField(read_only=True)
+    
+    class Meta:
+        model = User
+        fields = ['id', '_id', 'username', 'email', 'name', 'isAdmin']
+        
+        def get_token(self, obj):
+            token = RefreshToken.for_user(obj)
+            return str(token.access_token)
