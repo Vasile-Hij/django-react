@@ -137,6 +137,10 @@ runn.sh
 # Roadmap
 roadmap.txt
 
-# TODO
+# TODO -done
 todo.txt
 .env
+
+# Databases - done
+datadump.json
+db.json
