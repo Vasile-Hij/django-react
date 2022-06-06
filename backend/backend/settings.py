@@ -7,31 +7,32 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
-import os
 from datetime import timedelta
 from pathlib import Path
 
+import os
 import environ
-
-env = environ.Env(DEBUG=(bool, False))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+env = environ.Env()
+environ.Env.read_env(env_file=str(BASE_DIR) + '/.env')    
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.getenv('SECRET_KEY')
 
-SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DJANGO_DEBUG')
+DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = []
-#ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
-# ALLOWED_HOSTS = [] if not any(ALLOWED_HOSTS) else ALLOWED_HOSTS
+#LLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
+#ALLOWED_HOSTS = [] if not any(ALLOWED_HOSTS) else ALLOWED_HOSTS
+
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
 # Application definition
 
@@ -129,12 +130,35 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+POSTGRES_DB = os.environ.get('POSTGRES_DB')
+POSTGRES_USER = os.environ.get("POSTGRES_USER")
+POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")   
+POSTGRES_HOST = os.environ.get("POSTGRES_HOST") 
+POSTGRES_PORT = os.environ.get("POSTGRES_PORT") 
+
+
+POSTGRES_READY = (
+    POSTGRES_DB is not None
+    and POSTGRES_USER is not None
+    and POSTGRES_PASSWORD is not None
+    and POSTGRES_HOST is not None
+    and POSTGRES_PORT is not None
+)
+
+
+if POSTGRES_READY:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "NAME": POSTGRES_DB,
+            "USER": POSTGRES_USER,
+            "PASSWORD": POSTGRES_PASSWORD,
+            "HOST": POSTGRES_HOST,
+            "PORT": POSTGRES_PORT,
+        }
     }
-}
+
+
 
 
 # Password validation
