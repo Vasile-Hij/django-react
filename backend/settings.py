@@ -228,5 +228,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = True
 
 
-print("Static is", SIMPLE_JWT)
-
