@@ -133,6 +133,15 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
+""""
 POSTGRES_DB = os.environ.get('POSTGRES_DB')
 POSTGRES_USER = os.environ.get("POSTGRES_USER")
 POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")   
@@ -160,9 +169,11 @@ if POSTGRES_READY:
             "PORT": POSTGRES_PORT,
         }
     }
+"""
 
-
-
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
+print(DATABASES)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -197,8 +208,6 @@ USE_I18N = False
 USE_L10N = False
 
 USE_TZ = False
-
-DATABASES['default'].update(dj_database_url.config(conn_max_age=500, ssl_require=True))
 
 
 # Static files (CSS, JavaScript, Images)
