@@ -24,16 +24,16 @@ environ.Env.read_env(env_file=str(BASE_DIR) + '/.env')
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG')
+DEBUG = os.environ.get('DEBUG')
 
-#LLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
-#ALLOWED_HOSTS = [] if not any(ALLOWED_HOSTS) else ALLOWED_HOSTS
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = [] if not any(ALLOWED_HOSTS) else ALLOWED_HOSTS
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
+#ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", default=["*"])
 
 # Application definition
 
@@ -141,7 +141,7 @@ DATABASES = {
     }
 }
 
-""""
+"""
 POSTGRES_DB = os.environ.get('POSTGRES_DB')
 POSTGRES_USER = os.environ.get("POSTGRES_USER")
 POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")   
@@ -170,9 +170,8 @@ if POSTGRES_READY:
         }
     }
 """
-
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
+DATABASE_URL = os.environ.get('DATABASE_URL')
+DATABASES = {'default': dj_database_url.parse(DATABASE_URL)}
 
 
 # Password validation
