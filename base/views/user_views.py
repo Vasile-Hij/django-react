@@ -1,3 +1,4 @@
+#!/bin/usr/env python3
 from base.models import Note
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser

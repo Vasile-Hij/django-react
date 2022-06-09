@@ -144,3 +144,7 @@ todo.txt
 # Databases - done
 datadump.json
 db.json
+
+
+Private keys
+.settings.ini
