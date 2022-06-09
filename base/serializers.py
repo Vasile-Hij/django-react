@@ -1,3 +1,4 @@
+#!/bin/usr/env python3
 from django.contrib.auth.models import User
 
 from rest_framework import serializers

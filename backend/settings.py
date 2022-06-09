@@ -8,32 +8,29 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 import os
+from configparser import ConfigParser
 from datetime import timedelta
 from pathlib import Path
-
-import dj_database_url
-import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env = environ.Env()
-environ.Env.read_env(env_file=str(BASE_DIR) + '/.env')    
+config = ConfigParser()
+config.read('.settings.ini')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = config.get('backend_settings','SECRET_KEY')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG')
+DEBUG = config.get('backend_settings', 'DEBUG')
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = config.get('backend_settings', 'ALLOWED_HOSTS').split(',')
 ALLOWED_HOSTS = [] if not any(ALLOWED_HOSTS) else ALLOWED_HOSTS
-
-#ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", default=["*"])
+#ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", default=["*"]) #ConfigParser has no problem with windows paths as environ may have
 
 # Application definition
 
@@ -134,6 +131,8 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 
+# All the data from this database was successfully synced to Postgres
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -142,11 +141,12 @@ DATABASES = {
 }
 
 """
-POSTGRES_DB = os.environ.get('POSTGRES_DB')
-POSTGRES_USER = os.environ.get("POSTGRES_USER")
-POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")   
-POSTGRES_HOST = os.environ.get("POSTGRES_HOST") 
-POSTGRES_PORT = os.environ.get("POSTGRES_PORT") 
+
+POSTGRES_DB = config.get('backend_settings','POSTGRES_DB')
+POSTGRES_USER = config.get('backend_settings', 'POSTGRES_USER')
+POSTGRES_PASSWORD = config.get('backend_settings','POSTGRES_PASSWORD')   
+POSTGRES_HOST = config.get('backend_settings', 'POSTGRES_HOST') 
+POSTGRES_PORT = config.get('backend_settings','POSTGRES_PORT') 
 
 
 POSTGRES_READY = (
@@ -169,9 +169,10 @@ if POSTGRES_READY:
             "PORT": POSTGRES_PORT,
         }
     }
-"""
-DATABASE_URL = os.environ.get('DATABASE_URL')
-DATABASES = {'default': dj_database_url.parse(DATABASE_URL)}
+
+# Heroku deployment only
+# DATABASE_URL = os.environ.get('DATABASE_URL')
+# DATABASES = {'default': dj_database_url.parse(DATABASE_URL)}
 
 
 # Password validation
@@ -236,4 +237,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+
 
