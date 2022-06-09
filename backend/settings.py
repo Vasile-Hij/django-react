@@ -30,8 +30,7 @@ DEBUG = config.get('backend_settings', 'DEBUG')
 
 ALLOWED_HOSTS = config.get('backend_settings', 'ALLOWED_HOSTS').split(',')
 ALLOWED_HOSTS = [] if not any(ALLOWED_HOSTS) else ALLOWED_HOSTS
-
-#ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", default=["*"])
+#ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", default=["*"]) #ConfigParser has no problem with windows paths as environ may have
 
 # Application definition
 
@@ -238,4 +237,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+
 
