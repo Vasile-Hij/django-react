@@ -15,7 +15,7 @@ import dj_database_url
 import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env()
 environ.Env.read_env(env_file=str(BASE_DIR) + '/.env')    
@@ -24,16 +24,16 @@ environ.Env.read_env(env_file=str(BASE_DIR) + '/.env')
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG')
+DEBUG = os.environ.get('DEBUG')
 
-#LLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
-#ALLOWED_HOSTS = [] if not any(ALLOWED_HOSTS) else ALLOWED_HOSTS
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = [] if not any(ALLOWED_HOSTS) else ALLOWED_HOSTS
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
+#ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", default=["*"])
 
 # Application definition
 
@@ -133,6 +133,15 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
+"""
 POSTGRES_DB = os.environ.get('POSTGRES_DB')
 POSTGRES_USER = os.environ.get("POSTGRES_USER")
 POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")   
@@ -160,9 +169,9 @@ if POSTGRES_READY:
             "PORT": POSTGRES_PORT,
         }
     }
-
-db_from_env = dj_database_url.config(conn_max_age=600)
-DATABASES['default'].update(db_from_env)
+"""
+DATABASE_URL = os.environ.get('DATABASE_URL')
+DATABASES = {'default': dj_database_url.parse(DATABASE_URL)}
 
 
 # Password validation
@@ -227,5 +236,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CORS_ALLOW_ALL_ORIGINS = True
-
 
