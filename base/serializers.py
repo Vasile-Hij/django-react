@@ -1,11 +1,9 @@
-#!/bin/usr/env python3
 from django.contrib.auth.models import User
-
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from base.models import Note
+from base.models import City, Note
 
 
 class NoteSerializer(ModelSerializer):
@@ -21,7 +19,14 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ['id', '_id', 'username', 'email', 'name', 'isAdmin']
+        fields = [
+            'id', 
+            '_id', 
+            'username', 
+            'email', 
+            'name', 
+            'isAdmin'
+        ]
         
     def get__id(self, obj):
         return obj.id
@@ -42,8 +47,46 @@ class  UserSerializerWithToken(UserSerializer):
     
     class Meta:
         model = User
-        fields = ['id', '_id', 'username', 'email', 'name', 'isAdmin', 'token']
+        fields = [
+            'id', 
+            '_id', 
+            'username', 
+            'email', 
+            'name', 
+            'isAdmin', 
+            'token'
+        ]
         
     def get_token(self, obj):
         token = RefreshToken.for_user(obj)
         return str(token.access_token)
+
+
+class CityWeatherSerializer(serializers.Serializer):
+    # Location details
+    id = serializers.IntegerField()
+    city = serializers.StringRelatedField() #read-only
+    coutry_code = serializers.StringRelatedField()
+    country = serializers.StringRelatedField()
+    latitude = serializers.DecimalField(max_digits=6, decimal_places=4, default=0)
+    longitude = serializers.DecimalField(max_digits=6, decimal_places=4, default=0)
+    # Temperature details
+    temperature = serializers.StringRelatedField()
+    temperature_max = serializers.StringRelatedField()
+    temperature_min = serializers.StringRelatedField()
+    temparature_unit = serializers.StringRelatedField()
+    # Other weather details
+    humidity = serializers.StringRelatedField()
+    pressure = serializers.StringRelatedField()
+    wind_speed = serializers.StringRelatedField()
+    description = serializers.StringRelatedField()
+
+    icon = serializers.StringRelatedField()
+
+
+class CitySerializer(serializers.ModelSerializer):    
+    class Meta:
+        model = City
+        fields = "__all__"
+
+

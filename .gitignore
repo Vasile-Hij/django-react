@@ -145,6 +145,11 @@ todo.txt
 datadump.json
 db.json
 
-
 Private keys
 .settings.ini
+.self.json
+
+VScode settings
+.vscode
+extensions.json
+launch.json
