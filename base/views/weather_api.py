@@ -14,11 +14,11 @@ config.read('.settings.ini')
 
 
  # connection to Open Weather    
-BASE_WEATHER_API_URL = f'https://api.openweathermap.org/data/2.5/'
+BASE_WEATHER_API_URL = f'https://api.openweathermap.org/data/2.5/weather?'
 WEATHER_API_KEY = config.get('weather_api', 'WEATHER_API_KEY')
 
 
-class LocationApi(object):
+class LocationApiService(object):
     def __init__(self, api=BASE_WEATHER_API_URL, api_key=WEATHER_API_KEY ):
         self.api = api
         self.api_key = api_key
@@ -33,19 +33,23 @@ class LocationApi(object):
         unit = unit.lower()
     
         if unit == 'c' or unit == 'celsius':
-            unit_url = "&units=metric"
+            unit_url = "metric"
             unit = '°C'
         elif unit == 'f' or unit == 'fahrenheit':
-            unit_url = '&units=metric'
+            unit_url = 'imperial'
             unit = '°F'
         elif unit == 'k' or unit == 'kelvin':
-            unit_url = 'kelvin'
+            unit_url = ''
             unit = 'K'
         else:
             raise TypeError('Always provide unit')
         
+        params_units_api_key = {
+            'units': unit_url,
+            'appid': self.api_key,
+        }
 
-        url = self.api + unit_url + '&appid={}'.format(self.api_key) 
+        url = url + urllib.parse.urlencode(params_units_api_key) 
         logger.debug(f'Complete URL to API: {str(url)}')
         return url, unit
         
@@ -66,11 +70,11 @@ class LocationApi(object):
             logger.debug(f'Temperature unit is missing; default is metric')
             unit = 'c'
 
-        url = self.api + 'weather?q={}'.format(location)
+
+        url = self.api + 'q={}&'.format(location)
         complete_url, unit = self._add_unit_and_api_key(url, unit)
         response = requests.get(url=complete_url)
         data = response.json()
-
 
         logger.debug(f'Received weather data: {str(data)}')
 
@@ -96,10 +100,10 @@ class LocationApi(object):
             'description': data['weather'][0]['description'],
             'icon': data['weather'][0]['icon']
         }
-
+    
         logger.debug(f'Fetched data to: {str(weather_data)}')
 
-        return weather_data
+        return weather_data 
 
 
     @staticmethod
@@ -142,7 +146,7 @@ class LocationApi(object):
         city = city_and_country[0]
 
         # Converting diacritical characters to English chraracters  
-        city_to_english_alphabet = city.replace('ă', 'a').replace('â', 'a').replace('ș', 's').replace('ț','t')
+        city_to_english_alphabet = city.replace('ă', 'a').replace('â', 'a').reaplce('î','i').replace('ș', 's').replace('ț','t')
 
         if len(city_and_country) is not 2:
             logger.debug(f'No country code was given')
