@@ -83,10 +83,8 @@ class CityWeatherSerializer(serializers.Serializer):
 
     icon = serializers.StringRelatedField()
 
-
-class CitySerializer(serializers.ModelSerializer):    
+    
+class CitySerializer(serializers.ModelSerializer):
     class Meta:
         model = City
         fields = "__all__"
-
-

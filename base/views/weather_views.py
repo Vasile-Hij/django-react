@@ -87,3 +87,4 @@ class CityRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, )
     queryset = City.objects.all()
     serializer_class = CitySerializer
+
