@@ -82,8 +82,7 @@ class LocationApiService(object):
         
         weather_data = {
             # Location details
-            'id': data['id'],
-            'city': data['name'],
+            'location': data['name'],
             'country_code': data['sys']['country'],
             'country': self.country_code_to_country(country_code),
             'latitude': data['coord']['lat'],
@@ -125,9 +124,9 @@ class LocationApiService(object):
 
         if country != '':
             logger.debug(f'Converting {country} to country code')
-            country_code = pycountry.countries.get(name=country).alpha_2.lower()
+            country_code = pycountry.countries.get(name=country)
             logger.debug(f'Country code is {country_code}')
-            location = city + ',' + country_code
+            location = ','.join([city, country])
             logger.debug(f'Location is {location}')
         else:
             location = city
@@ -153,7 +152,7 @@ class LocationApiService(object):
         else: 
             country_code = city_and_country[1]
             logger.debug(f'Country code is {country_code}')
-            city_to_english_alphabet =  city_to_english_alphabet  + ',' + country_code
+            city_to_english_alphabet =  ','.join([city_to_english_alphabet, country_code])
 
         logger.debug(f'Location is {city_to_english_alphabet}')
         return city_to_english_alphabet

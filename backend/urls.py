@@ -8,7 +8,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('base.urls.user_urls')),
     path('notes/', include('base.urls.notes_urls')),
-    path('weather/', include('base.urls.weather_urls')),
+    path('locations/', include('base.urls.location_urls')),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
