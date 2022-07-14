@@ -61,7 +61,7 @@ REST_FRAMEWORK = {
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=2),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=90),
     'ROTATE_REFRESH_TOKENS': True,  # user continue to stay logged in during 90 days
     'BLACKLIST_AFTER_ROTATION': True, # previous REFRESH_TOKEN is no longer allowed 

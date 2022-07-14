@@ -1,0 +1,17 @@
+[weather_api]
+WEATHER_API_KEY=<OpenWeatherMap_api_key>
+
+
+[backend_settings]
+SECRET_KEY=<your_secret_key>
+DEBUG=True
+ALLOWED_HOSTS=127.0.0.1,localhost,0.0.0.0
+POSTGRES_USER=<user>
+POSTGRES_PASSWORD=<strongPass+word!@$>
+POSTGRES_DB=<postgres>
+POSTGRES_PORT=5432
+POSTGRES_HOST=localhost
+
+[admin_django]
+user=<admin>
+pass=<your_password>
