@@ -186,5 +186,10 @@ def updateLocationUnit(request, pk):
 def deleteMyLocation(request, pk):
     user = request.user
     cityToDelete = user.my_locations.get(id=pk)
-    cityToDelete.delete()
-    return Response(f'City of {cityToDelete} deleted', status=status.HTTP_200_OK)
+    
+    try:
+        cityToDelete.delete()
+    except UsersLocations.DoesNotExist:
+        message = {"detail":"This is not right id"}
+        return Response(message, status=status.HTTP_404_NOT_FOUND)
+    return Response(f'City deleted', status=status.HTTP_200_OK)
