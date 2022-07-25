@@ -3,7 +3,10 @@ from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from base.models import Note, City
+from base.models import (Note, Location, 
+                         UsersLocations, 
+                         ForecastHourly, 
+                         ForecastNow)
 
 
 class NoteSerializer(ModelSerializer):
@@ -11,6 +14,7 @@ class NoteSerializer(ModelSerializer):
     class Meta:
         model = Note
         fields = '__all__'
+
 
 class UserSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField(read_only=True)
@@ -26,7 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
             'email', 
             'name', 
             'isAdmin'
-        ]
+            ]
         
     def get__id(self, obj):
         return obj.id
@@ -55,36 +59,86 @@ class  UserSerializerWithToken(UserSerializer):
             'name', 
             'isAdmin', 
             'token'
-        ]
+            ]
         
     def get_token(self, obj):
         token = RefreshToken.for_user(obj)
         return str(token.access_token)
-
-
-class ForecastSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField()
-    location = serializers.StringRelatedField()
-    country_code = serializers.StringRelatedField()
-    country = serializers.StringRelatedField()
-    latitude = serializers.DecimalField(max_digits=6, decimal_places=4, default=0)
-    longitude = serializers.DecimalField(max_digits=7, decimal_places=4, default=0)
-    # Weather data
-    temperature = serializers.StringRelatedField()
-    temperature_max = serializers.StringRelatedField()
-    temperature_min = serializers.StringRelatedField()
-    temperature_unit = serializers.StringRelatedField()
-
-    humidity = serializers.StringRelatedField()
-    pressure = serializers.StringRelatedField()
-    wind_speed = serializers.StringRelatedField()
-    description = serializers.StringRelatedField()
-
-    icon = serializers.StringRelatedField()
     
     
-class CitySerializer(serializers.ModelSerializer):
+class LocationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = City
-        fields = "__all__"
+        model = Location
+        fields = [
+            'id', 
+            'city', 
+            'country', 
+            'country_code',
+            'user'
+            ]
+                        
                 
+class UsersLocationsSerializer(serializers.ModelSerializer):
+    location_city = serializers.SerializerMethodField(read_only=True)
+    #user = serializers.SerializerMethodField(read_only=True)
+    
+    class Meta:
+        model = UsersLocations
+        fields = [
+                'id',
+                'location_city',
+                #'user',
+                'unit'
+                ]
+ 
+    def get_location_city(self, obj):
+        user_location_city = obj.location_city
+        serializer = LocationSerializer(user_location_city, many=False)
+        return serializer.data
+        
+    #def get_user(self, obj):
+    #    user = obj.user
+    #    serializer = UserSerializer(user, many=False)
+    #    return serializer.data
+        
+        
+class ForecastHourlySerializer(serializers.ModelSerializer):
+    icon = serializers.CharField(read_only=True)
+    
+    class Meta:
+        model = ForecastHourly
+        fields = [
+            'id', 
+            'city', 
+            'created_at', 
+            'updated_at', 
+            'temperature', 
+            'feels_like',
+            'temperature_unit',
+            'humidity',
+            'pressure',
+            'wind_speed', 
+            'description', 
+            'icon'
+            ]
+        
+        
+class ForecastNowSerializer(serializers.ModelSerializer):
+    icon = serializers.CharField(read_only=True)
+    
+    class Meta:
+        model = ForecastNow
+        fields = [
+            'city',
+            'country_code', 
+            'country', 
+            'temperature', 
+            'temperature_max',
+            'temperature_min',
+            'temperature_unit',
+            'humidity',
+            'pressure',
+            'wind_speed', 
+            'description', 
+            'icon'
+        ]

@@ -1,5 +1,5 @@
 from django.test import TestCase
-from base.views.weather_api import LocationApiService as locationApiService
+from base.views.location_service.weather_api import LocationApiService as locationApiService
 
 # Create your tests here.
 url = 'https://api.openweathermap.org/data/2.5/weather?'

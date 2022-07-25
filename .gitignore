@@ -145,11 +145,11 @@ todo.txt
 datadump.json
 db.json
 
-Private keys
+# Private keys
 .settings.ini
 .self.json
 
-VScode settings
+# VSCode settings
 .vscode
 extensions.json
 launch.json
