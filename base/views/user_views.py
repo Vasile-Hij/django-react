@@ -44,6 +44,10 @@ def registerUser(request):
         message = {'detail': 'This email is already taken!'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
+"""
+    user permissions
+    params: create, read, update, delete
+"""
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
@@ -71,22 +75,6 @@ def getUserProfile(request):
     return Response(serializer.data)
 
 
-@api_view(['GET'])
-@permission_classes([IsAdminUser])
-def getUsers(request):
-    users = User.objects.all()
-    serializer = UserSerializer(users, many=True)
-    return Response(serializer.data)
-    
-
-@api_view(['GET'])
-@permission_classes([IsAdminUser])
-def getUserById(request, pk):
-    user = User.objects.get(id=pk)
-    serializer = UserSerializer(user, many=False)
-    return Response(serializer.data)
-
-
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def updateUser(request, pk):
@@ -103,7 +91,27 @@ def updateUser(request, pk):
     serializer = UserSerializer(user, many=False)
     return Response(serializer.data)
 
-    
+"""
+    admin permissions
+    params: read users, read user, delete user
+"""
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def getUserById(request, pk):
+    user = User.objects.get(id=pk)
+    serializer = UserSerializer(user, many=False)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def getUsers(request):
+    users = User.objects.all()
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
+
+
 @api_view(['DELETE'])
 @permission_classes([IsAdminUser])
 def deleteUser(request, pk):

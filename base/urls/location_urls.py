@@ -3,11 +3,10 @@ from base.views import location_views as views
 
 
 urlpatterns = [
-    path('admin', views.getCities, name='All cities'),
-    
-    path('', views.getMyCities, name='My cities'),
-    path('add/', views.addCity, name='Create city'),
-    path('city/', views.getMyCity, name='My city'),
-    path('update/', views.updateCity, name='Update city'),
-    path('delete/', views.deleteCity, name='Delete city')
+    path('cities/', views.getMyLocations, name='my-cities'),
+    path('add/', views.addLocation, name='create-city'),
+    path('update/<str:pk>/', views.updateLocationUnit, name='my-location-unit'),
+    path('city/<str:pk>/', views.getMyLocation, name='my-location'),
+    path('delete/<str:pk>/', views.deleteMyLocation, 
+         name='delete-my-location'), 
 ]
