@@ -23,3 +23,5 @@
 ![PATCH user2 denied partial update to user1](./screenshots/DR-31-PATCH-user2-denied-partial-update-user1.png)
 
 ![DELETE-id](./screenshots/DR-31-DELETE-id.png)
+
+![FORECAST-NOW](./screenshots/DR-32-service-to-user_location.png)
