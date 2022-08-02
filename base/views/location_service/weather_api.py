@@ -30,22 +30,22 @@ class LocationApiService(object):
             :param unit: Temperature unit of either C, F or K.
             :return: Tuple of the url and determined unit
         """
-        unit = unit.lower()
+        unit = unit
     
-        if unit == 'c' or unit == 'celsius':
-            unit_url = "metric"
-            unit = '°C'
-        elif unit == 'f' or unit == 'fahrenheit':
-            unit_url = 'imperial'
-            unit = '°F'
-        elif unit == 'k' or unit == 'kelvin':
-            unit_url = ''
-            unit = 'K'
-        else:
-            raise TypeError('Always provide unit')
+        # if unit == 'c' or unit == 'celsius':
+        #     unit_url = "metric"
+        #     unit = '°C'
+        # elif unit == 'f' or unit == 'fahrenheit':
+        #     unit_url = 'imperial'
+        #     unit = '°F'
+        # elif unit == 'k' or unit == 'kelvin':
+        #     unit_url = ''
+        #     unit = 'K'
+        # else:
+        #     raise TypeError('Always provide unit')
         
         params_units_api_key = {
-            'units': unit_url,
+            'units': unit,
             'appid': self.api_key,
         }
 

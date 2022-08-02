@@ -53,8 +53,7 @@ class UsersLocations(models.Model):
 
 class ForecastHourly(models.Model):
     id = models.AutoField(primary_key=True, editable=False)
-    city = models.ForeignKey(Location, on_delete=models.CASCADE, 
-                            related_name='city_forecast_hourly')
+    city = models.CharField(max_length=85)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     temperature = models.DecimalField(max_digits=5, decimal_places=2, default=0)
@@ -70,8 +69,7 @@ class ForecastHourly(models.Model):
     
     
 class ForecastNow(models.Model):
-    city = models.ForeignKey(Location, on_delete=models.CASCADE, 
-                                related_name='city_forecast_now')
+    city = models.CharField(max_length=85)
     country_code = models.CharField(max_length=3, blank=True)
     country = models.CharField(max_length=50, blank=True)
     temperature = models.DecimalField(max_digits=5, decimal_places=2, default=0)
