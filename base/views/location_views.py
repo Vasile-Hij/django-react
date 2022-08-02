@@ -9,26 +9,29 @@ from psycopg2 import IntegrityError
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework import status
 
 from base.models import Location, UsersLocations
 from base.serializers import (LocationSerializer, 
                               UsersLocationsSerializer)
 
-
-unit_validator = {
-        "celsius_short" : "c",
-        "celsius_long": "celsius",
-        "celsius": "metric",
-        "imperial_short": "f",
-        "imperial_long": "fahrenheit",
-        "imperial": "imperial"
+valid_units = { 
+    "unit0":"",           
+    "unit1": "celsius",
+    "unit2": "fahrenheit",
+    "unit3": "imperial",
+    "unit4": "kelvin",
+    "unit5": "c",
+    "unit6": "f",
+    "unit7": "k"
     }
 
 
 """
     user permissions
     params: addLocation, getMyLocation, getMyLocations, updateLocationUnit, deleteMyLocation
+    
+    Validation is made custom for each field, city and country_code is required
+        while unit and country are optionally
 """
 
 @api_view(['POST'])
@@ -41,35 +44,44 @@ def addLocation(request):
     country_code=data['country_code']
     country=data['country']
     unit=data['unit']  
-    
-    
-    if unit == "":
-        pass # consider that user has no preferences
-    elif unit not in unit_validator.values():
-        message = {"unit can be":'metric: c or celsius | imperial: f or fahrenheit | kelvin: k or kelvin'}
+
+    global valid_units
+
+    if city == "":
+        message = {"message":'Please insert a city!'}
         return Response(message, status=status.HTTP_404_NOT_FOUND)
+    
+    elif not city.isalpha():
+        message = {"message":'Other characters than strings are not accepted for city!'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
     else:
-        unit = ""   
-    
-    
+        city = city.capitalize()
+
+    if country == "":
+        country = country
+    elif not country.isalpha():
+        message = {"message":'Other characters than strings are not accepted for country!'}
+        return Response(message, status=status.HTTP_404_NOT_FOUND)
+
     if country_code == "":
         message = {"message":"provide country code, e.g. for Ireland is 'ie' "}
         return Response(message, status=status.HTTP_201_CREATED)
-    elif not country_code.isaplha():
-        message = {"message":'Other characters for country code than strings are not accepted!'}
+    elif not country_code.isalpha():
+        message = {"message":'Other characters than strings are not accepted for country code!'}
         return Response(message, status=status.HTTP_404_NOT_FOUND)
-    elif country_code > 2:
+    elif not len(str(country_code)) == 2:
         message = {"message":"Country code accepted is 2 letters only, e.g. for Ireland is 'ie' "}
         return Response(message, status=status.HTTP_404_NOT_FOUND)
-     
-        
-    if country == "":
-        pass
-    elif not country.isalpha():
-        message = {"message":'Other characters for country than strings are not accepted!'}
+    else:
+        country_code = country_code.capitalize()
+
+
+    if unit in valid_units.values(): 
+        unit = unit.lower()
+    else:
+        message = {"unit can be":'metric: c or celsius | imperial: f or fahrenheit | kelvin: k or kelvin'}
         return Response(message, status=status.HTTP_404_NOT_FOUND)
-        
-        
+     
     try:
         """
             Any user will create the locations only once, and other users will retrieve only 
@@ -101,29 +113,25 @@ def addLocation(request):
         return Response(message, status=status.HTTP_404_NOT_FOUND)
     
     serializer = UsersLocationsSerializer(add_user_city, many=False)
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def getMyLocation(request, pk):
+def getMyLocationById(request, pk):
     user = request.user
 
     try:
         my_city = user.my_locations.get(id=pk)
-    except UsersLocations.DoesNotExist:
-        message = {"message":'Please provide right id'}
-        return Response(message, status=status.HTTP_404_NOT_FOUND)
-    except ValueError:
-        message = {"message":'Other characters than integer are not accepted!'}
-        return Response(message, status=status.HTTP_404_NOT_FOUND)
-    except IndexError:
-        message = {"message":'Please insert user_location id!'}
-        return Response(message, status=status.HTTP_404_NOT_FOUND)
-      
-    serializer = UsersLocationsSerializer(my_city, many=False)
-    return Response(serializer.data)
-
+        if user.is_staff or my_city.user == user:
+            serializer = UsersLocationsSerializer(my_city, many=False)
+            return Response(serializer.data)
+        else:
+            Response({'detail': 'Not authorized to view this city'},
+                     status=status.HTTP_400_BAD_REQUEST)
+    except:
+        return Response({'detail': 'Location does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+   
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -152,6 +160,8 @@ def updateLocationUnit(request, pk):
     city=data['city']
     country_code=data['country_code']
     country=data['country']
+    
+    global valid_units
      
     if city or country_code or country != "":
         message = {"message": "You cannot to perform this action. Please search another city!"}
@@ -161,7 +171,7 @@ def updateLocationUnit(request, pk):
     new_unit = new_units.get(id=pk) 
     
     
-    if user != new_units:
+    if user != new_unit:
         message = {"Warning":"You are not the right user to do this!"}
         return Response(message, status=status.HTTP_401_UNAUTHORIZED)
     
@@ -171,9 +181,11 @@ def updateLocationUnit(request, pk):
     if new_unit == "":
         message = message = {"unit can be":'metric: c or celsius | imperial: f or fahrenheit | kelvin: k or kelvin'}
         return Response(message, status=status.HTTP_204_NO_CONTENT)
-    elif new_unit not in unit_validator.values():
+    elif new_unit not in valid_units.values():
         message = {"unit can be":'metric: c or celsius | imperial: f or fahrenheit | kelvin: k or kelvin'}
-        return Response(message, status=status.HTTP_404_NOT_FOUND)  
+        return Response(message, status=status.HTTP_404_NOT_FOUND)
+    else:
+        new_unit = new_unit.lower()  
         
     new_unit.save()
 
