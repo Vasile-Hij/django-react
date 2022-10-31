@@ -1,6 +1,6 @@
 # Django-React for weather history
 
-This web app contains user registration and login using JSON Web Token while for services it is using an API call on OpenWeatherMap that retrieve data which is given to user to search a new city and observe parameters past 24 hours and CRUD operations are possible. Endpoints being tested with Postman; roadmap assigned on Jira (Kanban process) then commited on GitHub.
+This web app contains user registration and login using JSON Web Token while for services it is using an API call on Open Weather Map that retrieve data which is given to user to observe current weather parameters or past 24 hours. CRUD operations to endpoints were tested with Postman as below displayed; roadmap was assigned on Jira (Kanban process), then committed on new GitHub branch, reviewed and approved to merge main branch.
 
 #
 
